@@ -40,7 +40,7 @@ jobs:
           if ! git diff --quiet; then
             git checkout -B hydownloader-auto-update
             git commit -am "hydownloader: $PREV_VERSION -> $NEXT_VERSION"
-            git push --force-with-lease origin hydownloader-auto-update
+            git push --force origin hydownloader-auto-update
             create_or_update_pr \
               hydownloader-auto-update \
               "hydownloader: $PREV_VERSION -> $NEXT_VERSION" \

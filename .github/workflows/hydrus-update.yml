@@ -41,7 +41,7 @@ jobs:
           if ! git diff --quiet; then
             git checkout -B hydrus-auto-update
             git commit -am "hydrus: $PREV_VERSION -> $NEXT_VERSION"
-            git push --force-with-lease origin hydrus-auto-update
+            git push --force origin hydrus-auto-update
             create_or_update_pr \
               hydrus-auto-update \
               "hydrus: $PREV_VERSION -> $NEXT_VERSION" \
