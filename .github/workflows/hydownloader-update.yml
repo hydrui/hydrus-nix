@@ -38,7 +38,7 @@ jobs:
           git config --global user.email "noreply@localhost"
           git config --global user.name "Hydrus-nix Update"
           if ! git diff --quiet; then
-            git branch -B hydownloader-auto-update
+            git checkout -B hydownloader-auto-update
             git commit -am "hydownloader: $PREV_VERSION -> $NEXT_VERSION"
             git push --force-with-lease origin hydownloader-auto-update
             create_or_update_pr \
