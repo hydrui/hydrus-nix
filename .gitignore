@@ -1,0 +1,5 @@
+result
+result-*
+.direnv/
+*.qcow2
+.nixos-test-history

@@ -1,0 +1,25 @@
+name: Nix Flake Checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+  schedule:
+    - cron: "30 13 * * *"
+
+jobs:
+  nix-flake-check:
+    name: "Nix Flake Check"
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: "write"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: DeterminateSystems/flake-checker-action@main
+        with:
+          ignore-missing-flake-lock: false
+          fail-mode: true

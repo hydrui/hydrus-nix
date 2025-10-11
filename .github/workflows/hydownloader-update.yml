@@ -1,0 +1,50 @@
+name: Hydownloader Update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 15 * * *"
+
+jobs:
+  update-hydownloader:
+    name: "Update Hydownloader"
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: "write"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Determine current version
+        run: echo "PREV_VERSION=$(nix eval .#hydownloader.version --raw)" >> $GITHUB_ENV
+      - name: Run nix-update
+        run: nix run nixpkgs#nix-update -- --flake -u hydownloader
+      - name: Determine new version
+        run: echo "NEXT_VERSION=$(nix eval .#hydownloader.version --raw)" >> $GITHUB_ENV
+      - name: Create a pull request
+        run: |-
+          create_or_update_pr() {
+            local branch="$1"
+            local title="$2"
+            local body="${3:-}"
+            local base="${4:-master}"
+            local pr_num=$(gh pr list --head "$branch" --json number -q '.[0].number // empty')
+            if [ -z "$pr_num" ]; then
+              gh pr create --title "$title" --body "$body" --base "$base" --head "$branch"
+            else
+              gh pr edit "$pr_num" --title "$title"
+            fi
+          }
+          git config --global user.email "noreply@localhost"
+          git config --global user.name "Hydrus-nix Update"
+          if ! git diff --quiet; then
+            git branch -B hydownloader-auto-update
+            git commit -am "hydownloader: $PREV_VERSION -> $NEXT_VERSION"
+            git push --force-with-lease origin hydownloader-auto-update
+            create_or_update_pr \
+              hydownloader-auto-update \
+              "hydownloader: $PREV_VERSION -> $NEXT_VERSION" \
+              "Update hydownloader from $PREV_VERSION to $NEXT_VERSION."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
