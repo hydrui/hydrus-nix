@@ -15,14 +15,14 @@
 
 stdenv.mkDerivation {
   pname = "hydownloader-systray";
-  version = "0-unstable-2025-10-11";
+  version = "0-unstable-2025-07-28-2053ace";
 
   src = fetchFromGitLab {
     domain = "gitgud.io";
     owner = "thatfuckingbird";
     repo = "hydownloader-systray";
-    rev = "b24e4e01e2c72fe2fb755ab92d4bf716cf4ae280";
-    hash = "sha256-MOIMW1gis3v9wKHGcD5ko8exNp/ewhRmbsM2UvzujYA=";
+    rev = "2053acef01cfd0ff464a3d55536da334dc350366";
+    hash = "sha256-iHp7ONJuLc18j5uLxSmt7i91bXI7pxA/08ksg875gsc=";
     fetchSubmodules = true;
   };
 
