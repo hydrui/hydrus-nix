@@ -32,7 +32,7 @@ let
 in
 (pkgs.testers.invalidateFetcherByDrvHash pkgs.nixosTest {
   name = "hydrus-services-advanced";
-  globalTimeout = 7200;
+  globalTimeout = 900;
   nodes = {
     client =
       { pkgs, ... }:

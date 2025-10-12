@@ -13,7 +13,7 @@ let
 in
 pkgs.nixosTest {
   name = "hydownloader-systray-default-settings";
-  globalTimeout = 7200;
+  globalTimeout = 900;
   nodes.client = {
     imports = [ self.outputs.nixosModules.default ];
     programs.hydownloader-systray = {

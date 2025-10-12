@@ -16,7 +16,7 @@ let
 in
 pkgs.nixosTest {
   name = "hydrus-services-basic";
-  globalTimeout = 7200;
+  globalTimeout = 900;
   nodes = {
     client =
       { pkgs, ... }:
