@@ -38,8 +38,8 @@ jobs:
               gh pr edit "$pr_num" --title "$title"
             fi
           }
-          git config --global user.email "noreply@localhost"
-          git config --global user.name "Hydrus-nix Update"
+          git config --global user.email "237503879+hydrui-auto-updater[bot]@users.noreply.github.com"
+          git config --global user.name "hydrui-auto-updater"
           if ! git diff --quiet; then
             git checkout -B hydownloader-systray-auto-update
             git commit -am "hydownloader-systray: $PREV_VERSION -> $NEXT_VERSION"

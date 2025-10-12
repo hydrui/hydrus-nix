@@ -17,7 +17,31 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/determinate-nix-action@main
-      - uses: DeterminateSystems/update-flake-lock@main
-        with:
-          pr-title: "Update Nix flake inputs"
-          token: ${{ steps.generate-token.outputs.token }}
+      - run: nix flake update
+      - name: Create a pull request
+        run: |-
+          create_or_update_pr() {
+            local branch="$1"
+            local title="$2"
+            local body="${3:-}"
+            local base="${4:-master}"
+            local pr_num=$(gh pr list --head "$branch" --json number -q '.[0].number // empty')
+            if [ -z "$pr_num" ]; then
+              gh pr create --title "$title" --body "$body" --base "$base" --head "$branch"
+            else
+              gh pr edit "$pr_num" --title "$title"
+            fi
+          }
+          git config --global user.email "237503879+hydrui-auto-updater[bot]@users.noreply.github.com"
+          git config --global user.name "hydrui-auto-updater"
+          if ! git diff --quiet; then
+            git checkout -B nix-flake-auto-update
+            git commit -am "Update Nix flake inputs"
+            git push --force origin nix-flake
+            create_or_update_pr \
+              nix-flake \
+              "Update Nix flake inputs" \
+              "Updates all Nix flake inputs to the latest version."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
