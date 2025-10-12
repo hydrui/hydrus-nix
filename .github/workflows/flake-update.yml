@@ -37,9 +37,9 @@ jobs:
           if ! git diff --quiet; then
             git checkout -B nix-flake-auto-update
             git commit -am "Update Nix flake inputs"
-            git push --force origin nix-flake
+            git push --force origin nix-flake-auto-update
             create_or_update_pr \
-              nix-flake \
+              nix-flake-auto-update \
               "Update Nix flake inputs" \
               "Updates all Nix flake inputs to the latest version."
           fi
