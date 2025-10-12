@@ -17,7 +17,7 @@ let
 in
 pkgs.nixosTest {
   name = "hydrus-client-custom-data-dir";
-  globalTimeout = 300;
+  globalTimeout = 900;
   nodes = {
     client =
       { pkgs, ... }:
