@@ -9,9 +9,6 @@ jobs:
   update-hydownloader:
     name: "Update Hydrus"
     runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - uses: actions/create-github-app-token@v2
         id: generate-token
