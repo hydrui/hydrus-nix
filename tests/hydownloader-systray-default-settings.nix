@@ -10,7 +10,7 @@ let
     overlays = [ self.outputs.overlays.default ];
   };
 in
-pkgs.nixosTest {
+pkgs.testers.nixosTest {
   name = "hydownloader-systray-default-settings";
   globalTimeout = 900;
   nodes.client = {

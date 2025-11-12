@@ -30,7 +30,7 @@ let
     outputHash = "sha256-pQpattmS9VmO3ZIQUFn66az8GSmB4IvYhTTCFn6SUmo=";
   };
 in
-(pkgs.testers.invalidateFetcherByDrvHash pkgs.nixosTest {
+(pkgs.testers.invalidateFetcherByDrvHash pkgs.testers.nixosTest {
   name = "hydrus-services-advanced";
   globalTimeout = 900;
   nodes = {
