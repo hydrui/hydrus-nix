@@ -11,7 +11,7 @@ let
   };
   accessKey = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 in
-pkgs.nixosTest {
+pkgs.testers.nixosTest {
   name = "hydownloader-systray-default-settings";
   globalTimeout = 900;
   nodes.client = {

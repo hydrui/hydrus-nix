@@ -15,7 +15,7 @@ let
     HYDRUS_DEFAULT_API_KEY="${testApiKey}"
   '';
 in
-pkgs.nixosTest {
+pkgs.testers.nixosTest {
   name = "hydrus-client-custom-data-dir";
   globalTimeout = 900;
   nodes = {
