@@ -16,11 +16,11 @@
 let
   pythonPackages = python3.pkgs;
   importJob = builtins.fromJSON (builtins.readFile ./importJob.json);
-  version = "0.65.0-unstable-9836f6d";
+  version = "0.66.0-unstable-373484d";
   src = fetchgit {
     url = "https://gitgud.io/thatfuckingbird/hydownloader";
-    rev = "9836f6d5637abae649083b006db897cb6d218213";
-    hash = "sha256-/Q3N9eu8OSiAqDY40jajfFggjrEzW7Z4UQo77e34Rpk=";
+    rev = "373484dc2134498eba71e490d2bda788e8850526";
+    hash = "sha256-wHBJfBFdI+aoRmfaCz/ufghKZcKjCVO0cQRXTCpt9d8=";
   };
 in
 pythonPackages.buildPythonApplication {
@@ -41,6 +41,7 @@ pythonPackages.buildPythonApplication {
     click
     bottle
     yt-dlp
+    yt-dlp-ejs
     hydrus-api
     python-dateutil
     requests
@@ -55,7 +56,8 @@ pythonPackages.buildPythonApplication {
   postPatch = ''
     substituteInPlace pyproject.toml \
       --replace-fail "poetry>=0.12" poetry-core \
-      --replace-fail "poetry.masonry.api" "poetry.core.masonry.api"
+      --replace-fail "poetry.masonry.api" "poetry.core.masonry.api" \
+      --replace-fail 'pillow = "^11.0.0"' 'pillow = "^12.0.0"'
   '';
   doCheck = false;
   postInstall = ''
