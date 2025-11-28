@@ -41,6 +41,7 @@ pythonPackages.buildPythonApplication {
     click
     bottle
     yt-dlp
+    yt-dlp-ejs
     hydrus-api
     python-dateutil
     requests
@@ -55,7 +56,8 @@ pythonPackages.buildPythonApplication {
   postPatch = ''
     substituteInPlace pyproject.toml \
       --replace-fail "poetry>=0.12" poetry-core \
-      --replace-fail "poetry.masonry.api" "poetry.core.masonry.api"
+      --replace-fail "poetry.masonry.api" "poetry.core.masonry.api" \
+      --replace-fail 'pillow = "^11.0.0"' 'pillow = "^12.0.0"'
   '';
   doCheck = false;
   postInstall = ''
