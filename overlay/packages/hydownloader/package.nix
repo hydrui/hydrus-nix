@@ -16,11 +16,11 @@
 let
   pythonPackages = python3.pkgs;
   importJob = builtins.fromJSON (builtins.readFile ./importJob.json);
-  version = "0.66.0-unstable-373484d";
+  version = "0.67.0-unstable-3c17d39";
   src = fetchgit {
     url = "https://gitgud.io/thatfuckingbird/hydownloader";
-    rev = "373484dc2134498eba71e490d2bda788e8850526";
-    hash = "sha256-wHBJfBFdI+aoRmfaCz/ufghKZcKjCVO0cQRXTCpt9d8=";
+    rev = "3c17d3950bdbe31d8e7d6ea88ae826505ec18410";
+    hash = "sha256-gkCFPBC0Y0C5E/TRNds3n2ZmKnNmHsuXR3ljGdpjGPw=";
   };
 in
 pythonPackages.buildPythonApplication {
