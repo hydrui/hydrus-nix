@@ -16,15 +16,20 @@
 
 python3Packages.buildPythonApplication rec {
   pname = "hydrus";
-  version = "653";
-  format = "other";
+  version = "657";
+  pyproject = false;
 
   src = fetchFromGitHub {
     owner = "hydrusnetwork";
     repo = "hydrus";
     tag = "v${version}";
-    hash = "sha256-OH07OvN5EaEsjlUHUJMqproiVcN75yL9u7lnCjXSITo=";
+    hash = "sha256-3hUFfDbyhRxbex81hLVUT3+4TCDqqmWZecCL+eGg250=";
   };
+
+  postPatch = ''
+    substituteInPlace hydrus/hydrus_test_boot.py \
+      --replace-fail "except:" "except Exception:"
+  '';
 
   nativeBuildInputs = [
     qt6.wrapQtAppsHook
