@@ -26,11 +26,6 @@ python3Packages.buildPythonApplication rec {
     hash = "sha256-vH+kUnSh7uOy4x6YNkzcTtp3Xmgfmcwt/vE/FbMWKDo=";
   };
 
-  postPatch = ''
-    substituteInPlace hydrus/hydrus_test_boot.py \
-      --replace-fail "except:" "except Exception:"
-  '';
-
   nativeBuildInputs = [
     qt6.wrapQtAppsHook
     python3Packages.mkdocs-material
