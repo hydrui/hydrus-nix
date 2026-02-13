@@ -57,7 +57,9 @@ pythonPackages.buildPythonApplication {
     substituteInPlace pyproject.toml \
       --replace-fail "poetry>=0.12" poetry-core \
       --replace-fail "poetry.masonry.api" "poetry.core.masonry.api" \
-      --replace-fail 'pillow = "^11.0.0"' 'pillow = "^12.0.0"'
+      --replace-fail 'pillow = "^11.0.0"' 'pillow = "^12.0.0"' \
+      --replace-fail 'yt-dlp = "^2025.12.8"' 'yt-dlp = "^2026.1.31"' \
+      --replace-fail 'yt-dlp-ejs = "^0.3.1"' 'yt-dlp-ejs = "^0.4.0"'
   '';
   doCheck = false;
   postInstall = ''
