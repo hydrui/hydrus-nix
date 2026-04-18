@@ -91,7 +91,7 @@ in
               pkgs.unixtools.xxd.out
             ];
             text = ''
-              if [ -n "$HYDRUS_DEFAULT_API_KEY" ] && [ ! -f "${cfg.dataDir}/client.db" ] && [ ! -f "${cfg.dataDir}/.initialized" ]; then
+              if [ -n "''${HYDRUS_DEFAULT_API_KEY:-}" ] && [ ! -f "${cfg.dataDir}/client.db" ] && [ ! -f "${cfg.dataDir}/.initialized" ]; then
                 # There's no dedicated way to just run migrations, so let's just
                 # run the hydrus client for a moment with offscreen rendering.
                 echo "Initializing hydrus client database."
