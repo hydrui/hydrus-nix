@@ -16,11 +16,11 @@
 let
   pythonPackages = python3.pkgs;
   importJob = builtins.fromJSON (builtins.readFile ./importJob.json);
-  version = "0.68.0-unstable-6168147";
+  version = "0.72.0-unstable-1090e7c";
   src = fetchgit {
     url = "https://gitgud.io/thatfuckingbird/hydownloader";
-    rev = "61681474d28782f0dc2294cc9cf40c48a7952ba7";
-    hash = "sha256-63rjIwuEBkkTr8C1z0TazD1lTtzJVU7ZrcAfQm3Ynjo=";
+    rev = "1090e7c3cd7d03055f31dec8e3cb9c3c7e3233ea";
+    hash = "sha256-jVWg58Ct2zQ12Unp2UKFHSXTNJPDA8VRo1U8TJSy9ag=";
   };
 in
 pythonPackages.buildPythonApplication {
@@ -38,6 +38,7 @@ pythonPackages.buildPythonApplication {
     setuptools
   ];
   propagatedBuildInputs = with pythonPackages; [
+    cheroot
     click
     bottle
     yt-dlp
@@ -54,11 +55,9 @@ pythonPackages.buildPythonApplication {
     mkvtoolnix
   ];
   postPatch = ''
-    substituteInPlace pyproject.toml \
-      --replace-fail "poetry>=0.12" poetry-core \
-      --replace-fail "poetry.masonry.api" "poetry.core.masonry.api"
-    sed -i 's/"''\^/">=/' pyproject.toml
+    sed -i -E 's/("[a-zA-Z0-9_-]+ *\()>=([0-9]+)\.[0-9]+\.[0-9]+[^)]*/\1>=\2.0.0/' pyproject.toml
   '';
+
   doCheck = false;
   postInstall = ''
     for cmd in hydownloader-importer hydownloader-anchor-exporter hydownloader-daemon hydownloader-tools hydl; do
