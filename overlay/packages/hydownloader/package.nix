@@ -38,6 +38,7 @@ pythonPackages.buildPythonApplication {
     setuptools
   ];
   propagatedBuildInputs = with pythonPackages; [
+    cheroot
     click
     bottle
     yt-dlp
@@ -54,11 +55,9 @@ pythonPackages.buildPythonApplication {
     mkvtoolnix
   ];
   postPatch = ''
-    substituteInPlace pyproject.toml \
-      --replace-fail "poetry>=0.12" poetry-core \
-      --replace-fail "poetry.masonry.api" "poetry.core.masonry.api"
-    sed -i 's/"''\^/">=/' pyproject.toml
+    sed -i -E 's/("[a-zA-Z0-9_-]+ *\()>=([0-9]+)\.[0-9]+\.[0-9]+[^)]*/\1>=\2.0.0/' pyproject.toml
   '';
+
   doCheck = false;
   postInstall = ''
     for cmd in hydownloader-importer hydownloader-anchor-exporter hydownloader-daemon hydownloader-tools hydl; do
