@@ -27,6 +27,7 @@ pkgs.testers.nixosTest {
           enable = true;
           environmentFile = hydrusEnv;
           dataDir = "/data/hydrus";
+          initialDatabase = ./db-seed;
         };
         networking.firewall.allowedTCPPorts = [ 8080 ];
         services.nginx = {
