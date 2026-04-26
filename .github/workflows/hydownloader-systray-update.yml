@@ -16,6 +16,12 @@ jobs:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+      - name: Configure Git
+        run: |
+          git config --global user.name '${{ steps.generate-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.generate-token.outputs.app-slug }}[bot]@users.noreply.github.com'
       - uses: DeterminateSystems/nix-installer-action@main
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Determine current version
@@ -35,11 +41,9 @@ jobs:
             if [ -z "$pr_num" ]; then
               gh pr create --title "$title" --body "$body" --base "$base" --head "$branch"
             else
-              gh pr edit "$pr_num" --title "$title"
+              gh pr edit "$pr_num" --title "$title" --body "$body"
             fi
           }
-          git config --global user.email "237503879+hydrui-auto-updater[bot]@users.noreply.github.com"
-          git config --global user.name "hydrui-auto-updater"
           if ! git diff --quiet; then
             git checkout -B hydownloader-systray-auto-update
             git commit -am "hydownloader-systray: $PREV_VERSION -> $NEXT_VERSION"
