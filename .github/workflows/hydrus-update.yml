@@ -31,7 +31,10 @@ jobs:
       - name: Determine new version
         run: echo "NEXT_VERSION=$(nix eval .#hydrus.version --raw)" >> $GITHUB_ENV
       - name: Migrate DB seed
-        run: nix run .#migrate-db-seed
+        run: |-
+          if ! git diff --quiet; then
+            nix run .#migrate-db-seed
+          fi
       - name: Create a pull request
         run: |-
           create_or_update_pr() {
