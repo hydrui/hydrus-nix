@@ -60,6 +60,16 @@ in
       default = config.services.hydrus.environmentFile;
       description = "Environment file containing API key to create, if desired, as HYDRUS_DEFAULT_API_KEY";
     };
+    initialDatabase = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = ''
+        Path to a directory containing compressed initial Hydrus database files
+        (client.db.zst, client.caches.db.zst, client.mappings.db.zst,
+        client.master.db.zst). If set, these files will be copied to the data
+        directory on first start (when client.db does not yet exist).
+      '';
+    };
   };
   config = lib.mkIf cfg.enable {
     services.hydrus.createUser = lib.mkDefault true;
@@ -82,47 +92,28 @@ in
         Group = cfg.group;
         WorkingDirectory = cfg.dataDir;
         EnvironmentFile = lib.mkIf (cfg.environmentFile != null) cfg.environmentFile;
-        ExecStartPre = lib.getExe (
-          pkgs.writeShellApplication {
-            name = "hydrus-client-db-init";
-            runtimeInputs = [
-              cfg.package
-              pkgs.sqlite.bin
-              pkgs.unixtools.xxd.out
-            ];
-            text = ''
-              if [ -n "''${HYDRUS_DEFAULT_API_KEY:-}" ] && [ ! -f "${cfg.dataDir}/client.db" ] && [ ! -f "${cfg.dataDir}/.initialized" ]; then
-                # There's no dedicated way to just run migrations, so let's just
-                # run the hydrus client for a moment with offscreen rendering.
-                echo "Initializing hydrus client database."
-                INIT_LOG=$(mktemp)
-                QT_QPA_PLATFORM=offscreen \
-                  hydrus-client -d ${cfg.dataDir} >"$INIT_LOG" 2>&1 &
-                HYDRUS_PID=$!
-                SECONDS=0
-                while [ $SECONDS -lt 120 ]; do
-                  if grep -q "To dismiss popup messages like this, right-click them." "$INIT_LOG" 2>/dev/null; then
-                    echo "Hydrus initialization complete, shutting down..."
-                    break
-                  fi
-                  sleep 1
-                done
-                kill -INT $HYDRUS_PID 2>/dev/null || true
-                wait $HYDRUS_PID 2>/dev/null || true
-                rm -f "$INIT_LOG"
-
-                # Set up the API. This is a pretty bad hack, but it's probably
-                # still less fragile than automating the UI or something.
-                SERVICE_CONFIG_HEX=$(echo -n '[21, 2, [[[0, "port"], [0, 45869]], [[0, "upnp_port"], [0, null]], [[0, "allow_non_local_connections"], [0, true]], [[0, "support_cors"], [0, true]], [[0, "log_requests"], [0, false]], [[0, "use_normie_eris"], [0, true]], [[0, "bandwidth_tracker"], [2, [39, 1, [[], [], [], [], [], [], [], [], [], []]]]], [[0, "bandwidth_rules"], [2, [38, 1, []]]], [[0, "external_scheme_override"], [0, null]], [[0, "external_host_override"], [0, null]], [[0, "external_port_override"], [0, null]], [[0, "use_https"], [0, false]]]]'  | xxd -p -c0)
-                sqlite3 ${cfg.dataDir}/client.db "UPDATE services SET dictionary_string = X'$SERVICE_CONFIG_HEX' WHERE service_type = 18;"
-                API_KEY_CONFIG_HEX=$(echo -n "[[76, \"new api permissions\", 2, [\"$HYDRUS_DEFAULT_API_KEY\", true, [], [44, 1, []]]]]" | xxd -p -c0)
-                sqlite3 ${cfg.dataDir}/client.db "UPDATE json_dumps SET dump = X'$API_KEY_CONFIG_HEX' WHERE dump_type = 75;"
-
-                touch "${cfg.dataDir}/.initialized"
-                echo "Done."
-              fi
-            '';
-          }
+        ExecStartPre = lib.mkIf (cfg.initialDatabase != null) (
+          lib.getExe (
+            pkgs.writeShellApplication {
+              name = "hydrus-client-db-init";
+              text = ''
+                if [ ! -f "${cfg.dataDir}/client.db" ]; then
+                  echo "Seeding hydrus client database from initial database."
+                  cp ${cfg.initialDatabase}/client*.db.zst "${cfg.dataDir}/"
+                  ${lib.getExe pkgs.zstd} --rm -d "${cfg.dataDir}"/client*.db.zst
+                  chmod 0640 "${cfg.dataDir}"/client*.db
+                  # Create the client_files directory structure that Hydrus expects
+                  for prefix in f t; do
+                    for i in $(seq 0 255); do
+                      printf -v hex '%02x' "$i"
+                      mkdir -p "${cfg.dataDir}/client_files/''${prefix}''${hex}"
+                    done
+                  done
+                  echo "Done."
+                fi
+              '';
+            }
+          )
         );
         ExecStart =
           let

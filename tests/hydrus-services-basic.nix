@@ -25,6 +25,7 @@ pkgs.testers.nixosTest {
         services.hydrus.client = {
           enable = true;
           environmentFile = hydrusEnv;
+          initialDatabase = ./db-seed;
         };
         environment.systemPackages = [
           pkgs.curl

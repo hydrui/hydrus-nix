@@ -56,6 +56,7 @@ in
           client = {
             enable = true;
             environmentFile = hydrusEnv;
+            initialDatabase = ./db-seed;
           };
           netns = {
             enable = true;

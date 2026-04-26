@@ -68,6 +68,21 @@
               program = "${pkgs.hydownloader}/bin/hydownloader-tools";
               meta.description = "Hydownloader tools";
             };
+            migrate-db-seed = {
+              type = "app";
+              program = pkgs.lib.getExe (
+                pkgs.writeShellApplication {
+                  name = "migrate-db-seed";
+                  runtimeInputs = [
+                    pkgs.hydrus
+                    pkgs.curl
+                    pkgs.sqlite.bin
+                  ];
+                  text = builtins.readFile ./scripts/migrate-db-seed.sh;
+                }
+              );
+              meta.description = "Migrate the test DB seed to the current hydrus version";
+            };
           };
           checks = nixpkgs.lib.genAttrs [
             "hydownloader-systray-default-settings"
