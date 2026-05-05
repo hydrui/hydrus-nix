@@ -16,7 +16,7 @@
 let
   pythonPackages = python3.pkgs;
   importJob = builtins.fromJSON (builtins.readFile ./importJob.json);
-  version = "0.72.0-unstable-1090e7c";
+  version = "-unstable-1090e7c";
   src = fetchgit {
     url = "https://gitgud.io/thatfuckingbird/hydownloader";
     rev = "1090e7c3cd7d03055f31dec8e3cb9c3c7e3233ea";
