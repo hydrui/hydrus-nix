@@ -1,4 +1,5 @@
 final: prev: {
+  hydrus-api = final.python3Packages.callPackage ./packages/hydrus-api/package.nix { };
   pillow-jpegxl-plugin =
     final.python3Packages.callPackage ./packages/pillow-jpegxl-plugin/package.nix
       {

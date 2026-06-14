@@ -5,6 +5,7 @@
   ffmpeg,
   mkvtoolnix,
   gallery-dl,
+  hydrus-api,
 
   pkgs,
   writers,
@@ -33,23 +34,24 @@ pythonPackages.buildPythonApplication {
   inherit version src;
   pname = "hydownloader";
   format = "pyproject";
-  nativeBuildInputs = with pythonPackages; [
-    poetry-core
-    setuptools
+  nativeBuildInputs = [
+    pythonPackages.poetry-core
+    pythonPackages.setuptools
   ];
-  propagatedBuildInputs = with pythonPackages; [
-    cheroot
-    click
-    bottle
-    yt-dlp
-    yt-dlp-ejs
-    hydrus-api
-    python-dateutil
-    requests
-    brotli
+  propagatedBuildInputs = [
+    pythonPackages.cheroot
+    pythonPackages.click
+    pythonPackages.bottle
+    pythonPackages.yt-dlp
+    pythonPackages.yt-dlp-ejs
+    pythonPackages.python-dateutil
+    pythonPackages.requests
+    pythonPackages.brotli
+    pythonPackages.pillow
+    pythonPackages.pysocks
+
     gallery-dl
-    pillow
-    pysocks
+    hydrus-api
 
     ffmpeg
     mkvtoolnix
