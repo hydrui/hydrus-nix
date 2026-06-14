@@ -51,7 +51,7 @@ in
       type = lib.types.listOf lib.types.str;
       default = [
         "--bind=${cfg.stateDir}/,html"
-        "--socket-permissions=0750"
+        "--socket-permissions=0770"
       ];
       description = "Extra arguments to pass to xpra server";
     };
