@@ -23,6 +23,13 @@ buildPythonPackage rec {
   postPatch = ''
     substituteInPlace pyproject.toml \
       --replace-fail 'pycurl==7.45.3' 'pycurl>=7.45.3'
+
+    # Fix compatibility with urllib3 >= 2.6 which passes max_length to _decode()
+    substituteInPlace curl_adapter/stream/response.py \
+      --replace-fail 'def _decode(self, data, decode_content, flush_decoder):' \
+                     'def _decode(self, data, decode_content, flush_decoder, max_length=None):' \
+      --replace-fail 'return super()._decode(data, decode_content, flush_decoder)' \
+                     'return super()._decode(data, decode_content, flush_decoder, max_length=max_length)'
   '';
 
   dependencies = [
