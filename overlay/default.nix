@@ -17,4 +17,15 @@ final: prev: {
       final.callPackage ./packages/hydrusTestutil/stopWireguardTunnel/package.nix
         { };
   };
+  python3Packages = prev.python3Packages // {
+    curl-adapter = final.python3Packages.callPackage ./packages/curl-adapter/package.nix { };
+  };
+  gallery-dl = prev.gallery-dl.overrideAttrs (old: {
+    propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [
+      final.python3Packages.curl-adapter
+    ];
+    patches = (old.patches or [ ]) ++ [
+      ./packages/gallery-dl/curl-impersonate.patch
+    ];
+  });
 }

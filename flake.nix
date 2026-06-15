@@ -33,6 +33,7 @@
         {
           packages = {
             default = pkgs.hydrus;
+            gallery-dl = pkgs.gallery-dl;
             hydownloader = pkgs.hydownloader;
             hydownloader-systray = pkgs.hydownloader-systray;
             hydrus = pkgs.hydrus;

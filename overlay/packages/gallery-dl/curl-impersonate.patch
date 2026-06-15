@@ -1,0 +1,18 @@
+--- a/gallery_dl/extractor/common.py	2026-06-15 14:11:20.382387820 -0400
++++ b/gallery_dl/extractor/common.py	2026-06-15 14:11:20.384387857 -0400
+@@ -22,6 +22,7 @@
+ import threading
+ from xml.etree import ElementTree
+ from requests.adapters import HTTPAdapter
++from curl_adapter import CurlCffiAdapter
+ from .message import Message
+ from .. import config, output, text, util, dt, cache, exception
+ urllib3 = requests.packages.urllib3
+@@ -667,6 +668,7 @@
+ 
+         adapter = _build_requests_adapter(
+             ssl_options, ssl_ciphers, ssl_ctx, source_address)
++        adapter = CurlCffiAdapter(impersonate_browser_type="firefox")
+         session.mount("https://", adapter)
+         session.mount("http://", adapter)
+ 
