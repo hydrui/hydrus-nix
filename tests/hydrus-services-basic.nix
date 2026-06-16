@@ -7,7 +7,6 @@
 let
   pkgs = import nixpkgs {
     inherit system;
-    overlays = [ self.outputs.overlays.default ];
   };
   testApiKey = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
   hydrusEnv = pkgs.writeText "hydrus-env" ''
@@ -50,7 +49,7 @@ pkgs.testers.nixosTest {
       assert "hydrus_version" in api_response, f"Missing hydrus_version in response: {api_response}"
       assert "version" in api_response, f"Missing version in response: {api_response}"
 
-      expected_version = ${toString pkgs.hydrus.version}
+      expected_version = ${toString self.outputs.packages.${system}.hydrus.version}
       assert api_response["hydrus_version"] == expected_version, \
         f"Version mismatch: got {api_response['hydrus_version']}, expected {expected_version}"
   '';

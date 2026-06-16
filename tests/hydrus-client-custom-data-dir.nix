@@ -7,7 +7,6 @@
 let
   pkgs = import nixpkgs {
     inherit system;
-    overlays = [ self.outputs.overlays.default ];
   };
   testApiKey = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
   testImageHash = "9df84a3cff6f8a3f7d912c85d6d993f55085a4e29965b9f6f2a87336d972bd79";
@@ -80,7 +79,7 @@ pkgs.testers.nixosTest {
       assert "success" in api_response["human_result_text"], f"Import didn't succeed: {api_response}"
       assert "hydrus_version" in api_response, f"Missing hydrus_version in response: {api_response}"
       assert "version" in api_response, f"Missing version in response: {api_response}"
-      expected_version = ${toString pkgs.hydrus.version}
+      expected_version = ${toString self.outputs.packages.${system}.hydrus.version}
       assert api_response["hydrus_version"] == expected_version, \
         f"Version mismatch: got {api_response['hydrus_version']}, expected {expected_version}"
       client.wait_until_succeeds(check_for_hash)

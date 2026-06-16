@@ -7,7 +7,6 @@
 let
   pkgs = import nixpkgs {
     inherit system;
-    overlays = [ self.outputs.overlays.default ];
   };
   inherit (pkgs) lib;
   testApiKey = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
@@ -113,7 +112,7 @@ in
       assert "success" in api_response["human_result_text"], f"Import didn't succeed: {api_response}"
       assert "hydrus_version" in api_response, f"Missing hydrus_version in response: {api_response}"
       assert "version" in api_response, f"Missing version in response: {api_response}"
-      expected_version = ${toString pkgs.hydrus.version}
+      expected_version = ${toString self.outputs.packages.${system}.hydrus.version}
       assert api_response["hydrus_version"] == expected_version, \
         f"Version mismatch: got {api_response['hydrus_version']}, expected {expected_version}"
       client.wait_until_succeeds(check_for_hash)
