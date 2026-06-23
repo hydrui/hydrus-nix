@@ -57,14 +57,15 @@ python3Packages.buildPythonApplication rec {
       beautifulsoup4
       cbor2
       chardet
+      cryptography
       dateparser
       html5lib
       lxml
       lz4
       mpv
       numpy
-      opencv4
       olefile
+      opencv4
       pillow
       pillow-heif
       pillow-jpegxl-plugin
@@ -73,14 +74,16 @@ python3Packages.buildPythonApplication rec {
       pyopenssl
       pyqt6
       pyqt6-charts
+      pyside6
       pysocks
       python-dateutil
       pyyaml
       qtpy
       requests
-      show-in-file-manager
       send2trash
       service-identity
+      show-in-file-manager
+      tldextract
       twisted
     ]
     ++ python3Packages.twisted.optional-dependencies.tls
