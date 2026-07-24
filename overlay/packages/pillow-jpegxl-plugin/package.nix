@@ -14,7 +14,7 @@
 }:
 
 buildPythonPackage rec {
-  pname = "pillow-jpegxl-plugin";
+  pname = "pillow-jxl-plugin";
   version = "1.3.8";
   pyproject = true;
 
