@@ -15,14 +15,14 @@
 
 buildPythonPackage rec {
   pname = "pillow-jpegxl-plugin";
-  version = "1.3.7";
+  version = "1.3.8";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Isotr0py";
     repo = "pillow-jpegxl-plugin";
     tag = "v${version}";
-    hash = "sha256-8yIkhlLZgKM0vdk97X20y9HZhhMpcS/07vmwgPL1zC0=";
+    hash = "sha256-S9Im6b8zHeGi5TWpInUngKbjs/QA4bdgp1vc21B33ss=";
   };
 
   postPatch = ''
