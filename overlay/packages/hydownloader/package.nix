@@ -6,6 +6,7 @@
   mkvtoolnix,
   gallery-dl,
   hydrus-api,
+  yt-dlp,
 
   pkgs,
   writers,
@@ -42,8 +43,6 @@ pythonPackages.buildPythonApplication {
     pythonPackages.cheroot
     pythonPackages.click
     pythonPackages.bottle
-    pythonPackages.yt-dlp
-    pythonPackages.yt-dlp-ejs
     pythonPackages.python-dateutil
     pythonPackages.requests
     pythonPackages.brotli
@@ -52,6 +51,7 @@ pythonPackages.buildPythonApplication {
 
     gallery-dl
     hydrus-api
+    yt-dlp
 
     ffmpeg
     mkvtoolnix
