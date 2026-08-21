@@ -42,7 +42,9 @@ service_name_map = {
     'redgifs': 'redgifs',
     'tiktok': 'tiktok',
     'reddit': 'reddit',
-    'iwara': 'iwara'
+    'iwara': 'iwara',
+    'pawchive.pw': 'pawchive',
+    'derpibooru': 'derpibooru'
 }
 
 
