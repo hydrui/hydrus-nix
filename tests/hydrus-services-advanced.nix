@@ -82,6 +82,10 @@ pkgs.testers.nixosTest {
         imports = [ self.outputs.nixosModules.default ];
         boot.kernel.sysctl."net.ipv4.ip_forward" = true;
         networking = {
+          dhcpcd.denyInterfaces = [
+            "veth-hydrusdef"
+            "wg*"
+          ];
           extraHosts = "${wgDefault} danbooru.donmai.us cdn.donmai.us";
           firewall.allowedTCPPorts = [
             443
@@ -167,6 +171,12 @@ pkgs.testers.nixosTest {
     client.wait_for_open_port(443, "${wgDefault}")
     client.wait_for_unit("hydrus-client.service")
     client.wait_for_open_port(45869, "${ipService}")
+
+    # Make sure the WireGuard path, rather than just nginx's host-side listener,
+    # is ready before removing the host's default route.
+    client.wait_until_succeeds(
+      "ip netns exec hydrus ping -c 1 -W 1 ${wgDefault}"
+    )
 
     with subtest("Disable guest Internet access"):
       client.succeed("ip route del default")
