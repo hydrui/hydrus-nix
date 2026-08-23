@@ -3,24 +3,36 @@
   stdenv,
   python3Packages,
   fetchFromGitHub,
+  fetchurl,
   qt6,
   copyDesktopItems,
   makeDesktopItem,
   writableTmpDirAsHomeHook,
-  ffmpeg,
+  ffmpeg_8,
   miniupnpc,
   pillow-jpegxl-plugin,
+  sqlite,
 }:
+let
+  mermaid = fetchurl {
+    url = "https://unpkg.com/mermaid@11.17.0/dist/mermaid.min.js";
+    hash = "sha256-jY4O7FbTqDtLPIf0IFCEVUbe6T6+GHXSEXwS5pR8DLM=";
+  };
+  iframe-worker = fetchurl {
+    url = "https://unpkg.com/iframe-worker@1.0.4/shim/index.js";
+    hash = "sha256-6OQS28/qm34xtf+iiNe2A1kV5xTFQvQXagzb4mL8lgk=";
+  };
+in
 python3Packages.buildPythonApplication rec {
   pname = "hydrus";
-  version = "673";
+  version = "684";
   pyproject = false;
 
   src = fetchFromGitHub {
     owner = "hydrusnetwork";
     repo = "hydrus";
     tag = "v${version}";
-    hash = "sha256-VSKOwMg/gUm2v2YwbWWF0KxHaF1dJj9+Kh4ogGqDRNc=";
+    hash = "sha256-8ZgvpyGqsY70utUreSgNg/dgAMMWJbt4aws8Jo2sOzU=";
   };
 
   nativeBuildInputs = [
@@ -37,10 +49,10 @@ python3Packages.buildPythonApplication rec {
 
   desktopItems = [
     (makeDesktopItem {
-      name = "hydrus-client";
+      name = "io.github.hydrusnetwork.hydrus";
       exec = "hydrus-client";
       desktopName = "Hydrus Client";
-      icon = "hydrus-client";
+      icon = "io.github.hydrusnetwork.hydrus";
       comment = meta.description;
       terminal = false;
       type = "Application";
@@ -48,6 +60,7 @@ python3Packages.buildPythonApplication rec {
         "FileTools"
         "Utility"
       ];
+      startupWMClass = "Hydrus Client";
     })
   ];
 
@@ -109,10 +122,15 @@ python3Packages.buildPythonApplication rec {
     # Move the hydrus module and related directories
     mkdir -p $out/${python3Packages.python.sitePackages}
     mv hydrus static $out/${python3Packages.python.sitePackages}
+    ln -sf ${lib.getExe sqlite} $out/${python3Packages.python.sitePackages}/static/build_files/linux/sqlite3
     # Fix random files being marked with execute permissions
     chmod -x $out/${python3Packages.python.sitePackages}/static/*.{png,svg,ico}
     # Build docs
-    mkdocs build -d help
+    mkdir -p .cache/plugin/privacy/assets/external/unpkg.com/{mermaid@11/dist,iframe-worker}
+    ln -s ${mermaid} .cache/plugin/privacy/assets/external/unpkg.com/mermaid@11/dist/mermaid.min.js
+    ln -s ${iframe-worker} .cache/plugin/privacy/assets/external/unpkg.com/iframe-worker/shim.js
+    ln -s shim.js .cache/plugin/privacy/assets/external/unpkg.com/iframe-worker/shim
+    mkdocs build -d help -f mkdocs-offline.yml
     mkdir -p $doc/share/doc
     mv help $doc/share/doc/hydrus
 
@@ -124,7 +142,7 @@ python3Packages.buildPythonApplication rec {
 
     # desktop item
     mkdir -p "$out/share/icons/hicolor/scalable/apps"
-    ln -s "$doc/share/doc/hydrus/assets/hydrus-white.svg" "$out/share/icons/hicolor/scalable/apps/hydrus-client.svg"
+    ln -s "$doc/share/doc/hydrus/assets/hydrus-white.svg" "$out/share/icons/hicolor/scalable/apps/io.github.hydrusnetwork.hydrus.svg"
   ''
   + ''
     runHook postInstall
@@ -148,7 +166,7 @@ python3Packages.buildPythonApplication rec {
     makeWrapperArgs+=("''${qtWrapperArgs[@]}")
     makeWrapperArgs+=(--prefix PATH : ${
       lib.makeBinPath [
-        ffmpeg
+        ffmpeg_8
         miniupnpc
       ]
     })

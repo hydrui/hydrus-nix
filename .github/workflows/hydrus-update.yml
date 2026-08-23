@@ -9,6 +9,7 @@ jobs:
   update-hydownloader:
     name: "Update Hydrus"
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/create-github-app-token@v2
         id: generate-token
@@ -25,12 +26,13 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Determine current version
-        run: echo "PREV_VERSION=$(nix eval .#hydrus.version --raw)" >> $GITHUB_ENV
+        run: echo "PREV_VERSION=$(nix eval .#hydrus.version --raw)" >> "$GITHUB_ENV"
       - name: Run nix-update
         run: nix run nixpkgs#nix-update -- --flake hydrus
       - name: Determine new version
-        run: echo "NEXT_VERSION=$(nix eval .#hydrus.version --raw)" >> $GITHUB_ENV
+        run: echo "NEXT_VERSION=$(nix eval .#hydrus.version --raw)" >> "$GITHUB_ENV"
       - name: Migrate DB seed
+        timeout-minutes: 15
         run: |-
           if ! git diff --quiet; then
             nix run .#migrate-db-seed
@@ -42,7 +44,8 @@ jobs:
             local title="$2"
             local body="${3:-}"
             local base="${4:-master}"
-            local pr_num=$(gh pr list --head "$branch" --json number -q '.[0].number // empty')
+            local pr_num
+            pr_num=$(gh pr list --head "$branch" --json number -q '.[0].number // empty')
             if [ -z "$pr_num" ]; then
               gh pr create --title "$title" --body "$body" --base "$base" --head "$branch"
             else
