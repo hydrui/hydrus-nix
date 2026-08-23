@@ -25,7 +25,8 @@ jobs:
             local title="$2"
             local body="${3:-}"
             local base="${4:-master}"
-            local pr_num=$(gh pr list --head "$branch" --json number -q '.[0].number // empty')
+            local pr_num
+            pr_num=$(gh pr list --head "$branch" --json number -q '.[0].number // empty')
             if [ -z "$pr_num" ]; then
               gh pr create --title "$title" --body "$body" --base "$base" --head "$branch"
             else
