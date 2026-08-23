@@ -5,26 +5,26 @@ on:
   schedule:
     - cron: "45 23 * * 3"
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   update-hydownloader:
     name: "Update Hydrus"
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    permissions:
+      contents: read # Required by actions/checkout.
+      id-token: write # Required by Magic Nix Cache.
     steps:
-      - uses: actions/create-github-app-token@v2
-        id: generate-token
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-      - name: Configure Git
-        run: |
-          git config --global user.name '${{ steps.generate-token.outputs.app-slug }}[bot]'
-          git config --global user.email '${{ steps.generate-token.outputs.app-slug }}[bot]@users.noreply.github.com'
-      - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+          persist-credentials: false
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+      - uses: DeterminateSystems/magic-nix-cache-action@908b263ff629f4cc17666315b7fd3ec127c6244d # v14
       - name: Determine current version
         run: echo "PREV_VERSION=$(nix eval .#hydrus.version --raw)" >> "$GITHUB_ENV"
       - name: Run nix-update
@@ -37,6 +37,13 @@ jobs:
           if ! git diff --quiet; then
             nix run .#migrate-db-seed
           fi
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: generate-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
       - name: Create a pull request
         run: |-
           create_or_update_pr() {
@@ -52,9 +59,12 @@ jobs:
               gh pr edit "$pr_num" --title "$title" --body "$body"
             fi
           }
+          git config --local user.name "${APP_SLUG}[bot]"
+          git config --local user.email "${APP_SLUG}[bot]@users.noreply.github.com"
           if ! git diff --quiet; then
             git checkout -B hydrus-auto-update
             git commit -am "hydrus: $PREV_VERSION -> $NEXT_VERSION"
+            gh auth setup-git
             git push --force origin hydrus-auto-update
             create_or_update_pr \
               hydrus-auto-update \
@@ -62,4 +72,5 @@ jobs:
               "Update hydrus from $PREV_VERSION to $NEXT_VERSION."
           fi
         env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          APP_SLUG: ${{ steps.generate-token.outputs.app-slug }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
