@@ -9,17 +9,33 @@ on:
   schedule:
     - cron: "30 13 * * *"
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   nix-flake-check:
     name: "Nix Flake Check"
     runs-on: ubuntu-24.04
     permissions:
-      contents: "write"
+      contents: read # Required by actions/checkout and Zizmor.
+      id-token: write # Required by Magic Nix Cache.
     steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
-      - uses: DeterminateSystems/flake-checker-action@main
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Audit GitHub Actions
+        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
+        with:
+          advanced-security: false
+          annotations: true
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+      - uses: DeterminateSystems/magic-nix-cache-action@908b263ff629f4cc17666315b7fd3ec127c6244d # v14
+      - name: Lint GitHub Actions
+        run: nix run nixpkgs#actionlint
+      - uses: DeterminateSystems/flake-checker-action@de924abd783455e8429c858962b9e43062d19da1 # v13
         with:
           ignore-missing-flake-lock: false
           fail-mode: true

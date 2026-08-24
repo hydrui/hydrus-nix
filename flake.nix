@@ -79,6 +79,8 @@
                     pkgs.hydrus
                     pkgs.curl
                     pkgs.sqlite.bin
+                    pkgs.util-linux
+                    pkgs.zstd
                   ];
                   text = builtins.readFile ./scripts/migrate-db-seed.sh;
                 }
