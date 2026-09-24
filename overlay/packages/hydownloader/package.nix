@@ -46,6 +46,7 @@ pythonPackages.buildPythonApplication {
     pythonPackages.python-dateutil
     pythonPackages.requests
     pythonPackages.brotli
+    pythonPackages.natsort
     pythonPackages.pillow
     pythonPackages.pysocks
 
