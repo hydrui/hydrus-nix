@@ -118,7 +118,6 @@ in
 
   # Just some boilerplate, nothing to see here.
   boot.kernel.sysctl."net.ipv4.ip_forward" = true;
-  virtualisation.msize = 524288;
   boot.loader.grub.device = "/dev/sda";
   fileSystems."/".device = "/dev/sda1";
   system.stateVersion = "25.11";
