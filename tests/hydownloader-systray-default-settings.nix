@@ -19,6 +19,8 @@ pkgs.testers.nixosTest {
   testScript = ''
     client.start()
     # If this fails it likely means the systray module needs to be updated!
-    client.succeed("diff /etc/hydownloader-systray/settings.ini ${self.outputs.packages.${system}.hydownloader-systray.src}/settings.ini")
+    client.succeed("diff /etc/hydownloader-systray/settings.ini ${
+      self.outputs.packages.${system}.hydownloader-systray.src
+    }/settings.ini")
   '';
 }
