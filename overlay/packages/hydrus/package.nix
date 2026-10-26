@@ -10,7 +10,6 @@
   writableTmpDirAsHomeHook,
   ffmpeg_8,
   miniupnpc,
-  pillow-jpegxl-plugin,
   sqlite,
 }:
 let
@@ -82,7 +81,7 @@ python3Packages.buildPythonApplication rec {
       opencv4
       pillow
       pillow-heif
-      pillow-jpegxl-plugin
+      pillow-jxl-plugin
       psutil
       pympler
       pyopenssl

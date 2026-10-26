@@ -37,7 +37,6 @@
             hydownloader = pkgs.hydownloader;
             hydownloader-systray = pkgs.hydownloader-systray;
             hydrus = pkgs.hydrus;
-            pillow-jpegxl-plugin = pkgs.pillow-jpegxl-plugin;
           };
           apps = {
             hydrus-client = {
